@@ -4,7 +4,7 @@ define windows_service_installer($binary_name, $target_path, $service_name, $dis
   $installUtil_filepath = "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\InstallUtil.exe"
     
   exec { "create_target_directory":
-		command => "cmd /c mkdir ${target_path}",
+		command => "cmd /c mkdir \"${target_path}\"",
 		path    => "${param::powershell::path};${::path}",
 		unless => "${param::powershell::command} -Command \"if (Test-Path '${target_path}') { exit 0 } else { exit 1 }\"",
   }
@@ -19,7 +19,7 @@ define windows_service_installer($binary_name, $target_path, $service_name, $dis
   }
 
   exec { 'install-skeleton-service':
-    command   => "\"${installUtil_filepath}\" /i  ${target_path}\\${binary_name} /servicename=\"${service_name}\" /displayname=\"${display_name}\" /description=\"${description}\" ",
+    command   => "\"${installUtil_filepath}\" /i \"${target_path}\\${binary_name}\" /servicename=\"${service_name}\" /displayname=\"${display_name}\" /description=\"${description}\" ",
 	path      => "${param::powershell::path};C:\\Windows\\sysnative;${::path}",
 	onlyif    => "${param::powershell::command} -Command \"if ((Get-Service \"${$service_name}\" -ErrorAction SilentlyContinue).DisplayName -eq \$NULL) { exit 0 } else { exit 1 }\"",
     logoutput => true,
